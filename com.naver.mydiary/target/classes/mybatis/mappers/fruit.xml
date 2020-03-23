@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- resultType은 select와 parameterType은 where 와 매핑 -->
+<mapper namespace="fruit">
+
+	<!--fruit 테이블에서 전체 데이터 가져오는 SQL -->
+	<select id="allfruit" resultType="Fruit">
+		select *
+		from fruit
+		order by fruitid
+	</select>
+
+	<!-- fruitid를 가지고 fruit 테이블에서 하나의 데이터를 가져오는 SQL -->
+	<select id="getfruit" resultType="Fruit" parameterType="java.lang.Integer">
+		select *
+		from fruit
+		where fruitid = #{fruitid}
+	</select>
+	
+	<!-- 상품 등록(삽입) -->
+	<insert id="insert" parameterType="Fruit">
+		insert into fruit 
+		values(#{fruitid},#{fruitname},#{price},#{description},#{pictureurl})
+	</insert>
+	
+	<!-- 가장 큰 상품 아이디 찾기 -->
+	<select id="maxnum" resultType="java.lang.Integer">
+		select max(fruitid)
+		from fruit
+	</select>
+	
+	<!-- 상품 수정 -->
+	<update id="update" parameterType="Fruit">
+		update fruit
+		set fruitname = #{fruitname}, price = #{price}, description = #{description}, pictureurl = #{pictureurl}
+		where fruitid=#{fruitid}
+	</update>
+	
+	<!-- 상품 삭제 -->
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from fruit
+		where fruitid=#{fruitid}
+	</delete>
+	
+	<!-- 삭제를 위한 상품 이미지 파일이름 select -->
+	<select id="fileInfo" resultType="java.lang.String">
+		select pictureurl
+		from fruit
+		where fruitid=#{fruitid}
+	</select>
+
+</mapper>

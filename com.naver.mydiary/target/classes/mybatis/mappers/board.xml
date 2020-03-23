@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+	<!-- 게시글 작성을 위한 SQL -->
+	<insert id="write" parameterType="Board">
+		insert into board(
+			boardnum, boardtitle, boardcontent, boarddate, boardip, updatedate, email)
+		values(
+			#{boardnum}, #{boardtitle}, #{boardcontent}, #{boarddate}, #{boardip}, #{updatedate}, #{email})
+	</insert>
+	
+	<!-- 가장 큰 글번호 찾아오는 SQL -->
+	<select id="maxnum" resultType="java.lang.Integer">
+		select max(boardnum)
+		from board
+	</select>
+	
+	<!-- 전체 데이터를 updatedate의 내림차순으로 정렬해서 리턴하는 SQL -->
+	<!-- nickname은 MyDiaryUser 테이블에 존재하는 컬럼이므로 join을 해서 가져와야 합니다. -->
+	<select id="list" resultType="Board">
+		select boardnum, boardtitle, boardreadcnt, nickname, updatedate
+		from mydiaryuser, board
+		where mydiaryuser.email = board.email
+		order by updatedate desc
+	</select>
+	
+	<!-- 상세보기 구현을 위한 SQL -->
+	<!-- 글번호(boardnum)을 가지고 하나의 데이터를 가져오는 SQL 구문 -->
+	<select id="detail" resultType="Board" parameterType="java.lang.Integer">
+		select boardnum, boardtitle, boardcontent, boardip, boarddate, updatedate, boardreadcnt, mydiaryuser.email, nickname
+		from mydiaryuser, board
+		where mydiaryuser.email = board.email and boardnum = #{boardnum}
+	</select>
+	
+	<!-- 글번호(boardnum)을 가지고 조회수를 1증가시키는 SQL 구문 -->
+	<update id="updateReadcnt" parameterType="java.lang.Integer">
+		update board
+		set boardreadcnt = boardreadcnt + 1
+		where boardnum = #{boardnum}
+	</update>
+	
+	<!-- 게시글 수정을 위한 SQL -->
+	<update id="update" parameterType="Board">
+		update board
+		set boardtitle = #{boardtitle}, boardcontent=#{boardcontent}, boardip=#{boardip}, updatedate=#{updatedate}
+		where boardnum = #{boardnum}
+	</update>
+	
+	<!-- 게시글 삭제를 위한 SQL -->
+	<delete id="delete" parameterType="java.lang.Integer">
+		delete from board
+		where boardnum = #{boardnum}
+	</delete>
+	
+	<!-- 게시글 페이징 처리 -->
+	<!-- 게시글 페이징 처리를 위한 sql을 추가 -->
+	<select id="listPaging" resultType="Board">
+		select boardnum, boardtitle, boardcontent, boardip, boarddate, updatedate, boardreadcnt
+		from board
+		where boardnum > 0
+		order by boardnum desc
+		limit #{page}, 5
+	</select>
+	
+	<!-- 게시글 페이징 처리를 도와주기 위한 SQL을 추가 -->
+	<select id="listCriteria" resultType="Board">
+		select boardnum, boardtitle, boardcontent, boardip, boarddate, updatedate, boardreadcnt
+		from board
+		where boardnum > 0
+		order by boardnum desc
+		limit #{pageStart}, #{perPageNum}
+	</select>
+	
+	<!-- 게시글 페이징 처리의 전체 게시글을 찾기 위한 SQL을 추가 -->
+	<select id="countBoardList" resultType="int">
+		select COUNT(boardnum)
+		from board
+		where boardnum > 0
+	</select>
+</mapper>

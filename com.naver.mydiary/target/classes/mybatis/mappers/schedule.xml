@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="schedule">
+
+   <!-- 일정 추가 -->
+   <insert id="insert" parameterType="Schedule">
+      insert into schedule(num, startDate, endDate, loc, detail, category, email)
+      values(#{num}, #{startDate}, #{endDate}, #{loc}, #{detail}, #{category}, #{email})
+   </insert>
+   
+   <!-- 글번호 찾기 -->
+   <select id="maxnum" resultType="java.lang.Integer">
+      select max(num)
+      from schedule
+   </select>
+   
+   <!-- 일정 목록 -->
+   <select id="list" resultType="Schedule" parameterType="java.lang.String">
+   		select *
+   		from mydiaryuser, schedule
+   		where mydiaryuser.email=schedule.email and startDate like CONCAT('%',#{sDay},'%')
+   </select>
+   
+   <!-- 일정 자세히 -->
+   <select id="detail" resultType="Schedule" parameterType="java.lang.Integer">
+   		select *
+   		from mydiaryuser, schedule
+   		where mydiaryuser.email=schedule.email and num=#{num}
+   </select>
+   
+   <!-- 일정 수정 -->
+   <update id="update" parameterType="Schedule">
+         update schedule
+         set category=#{category}, startDate=#{startDate}, endDate=#{endDate}, loc=#{loc}, detail=#{detail}
+         where num=#{num}
+   </update>
+   
+   <!-- 일정 삭제 -->
+   <delete id="delete" parameterType="java.lang.Integer">
+   		delete from schedule
+   		where num = #{num}
+   </delete>
+   
+   <!-- personal -->
+   <select id="personal" resultType="Schedule" parameterType="java.lang.String">
+   		select *
+   		from schedule
+   		where email = #{email} and startDate like #{startDate}
+   </select>
+   
+   
+</mapper>
