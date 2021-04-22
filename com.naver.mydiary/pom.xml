@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.mybatis</groupId>
 			<artifactId>mybatis</artifactId>
-			<version>3.4.6</version>
+			<version>3.5.6</version>
 		</dependency>
 		<!-- Spring 프로젝트에서 MyBatis를 사용할 때 필수 -->
 		<dependency>
